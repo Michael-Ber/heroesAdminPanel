@@ -1,0 +1,41 @@
+{
+  "heroes": [
+    {
+      "id": 1,
+      "name": "Первый герой",
+      "description": "Первый герой в рейтинге!",
+      "element": "fire"
+    },
+    {
+      "name": "Second Hero",
+      "description": "Nothing",
+      "element": "water",
+      "id": "a702f393-6c2b-43d7-bb24-1c72931de639"
+    },
+    {
+      "name": "Third Hero",
+      "description": "Something",
+      "element": "wind",
+      "id": "f570f3a6-2935-4a15-86cb-560c6941e52c"
+    }
+  ],
+  "filteredHeroes": [
+  ],
+  "filters": [
+    {
+      "all": "Я владею элементом..."
+    },
+    {
+      "fire": "Огонь"
+    },
+    {
+      "water": "Вода"
+    },
+    {
+      "wind": "Ветер"
+    },
+    {
+      "earth": "Земля"
+    }
+  ]
+}
