@@ -1,7 +1,9 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import Spinner from "../spinner/Spinner";
 import { useHttp } from "../../hooks/http.hook";
-import { heroesFetching, heroesFetched, heroesFetchingError, filtersFetching, filtersFetched, filtersFetchingError } from '../../actions';
+import { filtersFetching, filtersFetched, filtersFetchingError, activeFilterChanged } from '../../actions';
+import classNames from "classnames";
 // Задача для этого компонента:
 // Фильтры должны формироваться на основании загруженных данных
 // Фильтры должны отображать только нужных героев при выборе
@@ -10,41 +12,49 @@ import { heroesFetching, heroesFetched, heroesFetchingError, filtersFetching, fi
 // Представьте, что вы попросили бэкенд-разработчика об этом
 
 const HeroesFilters = () => {
-    const {filters, heroes} = useSelector(state => state);
+    const {filters, filtersLoadingStatus, activeFilter} = useSelector(state => state);
     const dispatch = useDispatch();
-    const [filter, setFilter] = useState('all');
     const {request} = useHttp();
 
-    const filterItems = (filter) => {
-        return heroes.filter(item => item.element === filter)
+    useEffect(() => {
+        
+        dispatch(filtersFetching());
+        request("http://localhost:3001/filters")
+            .then(data => dispatch(filtersFetched(data)))
+            .catch(() => dispatch(filtersFetchingError()))
+
+        // eslint-disable-next-line 
+    }, []);
+
+
+    if (filtersLoadingStatus === "loading") {
+        return <Spinner/>;
+    } else if (filtersLoadingStatus === "error") {
+        return <h5 className="text-center mt-5">Ошибка загрузки</h5>
     }
 
+    const renderFilters = (arr) => {
+        if(arr.length === 0) {
+            return <h5 className="text-center mt-5">Фильтры не найдены</h5>
+        }
+        return arr.map(({name, label, className}) => {
+            const btnClass = classNames('btn', className, {
+                'active': name === activeFilter
+            })
+            return <button
+                    key={name}
+                    id={name}
+                    className={btnClass}
+                    onClick={() => dispatch(activeFilterChanged(name))}>{label}</button>
+        })
+    }
 
     return (
         <div className="card shadow-lg mt-4">
             <div className="card-body">
                 <p className="card-text">Отфильтруйте героев по элементам</p>
                 <div className="btn-group">
-                    <button 
-                        onClick={e => setFilter(e.target.dataset.value)}
-                        data-value={filters.length > 0 && Object.keys(filters[0])} 
-                        className="btn btn-outline-dark active">Все</button>
-                    <button 
-                        onClick={e => setFilter(e.target.dataset.value)}
-                        data-value={filters.length > 0 && Object.keys(filters[1])} 
-                        className="btn btn-danger">Огонь</button>
-                    <button 
-                        onClick={e => setFilter(e.target.dataset.value)} 
-                        data-value={filters.length > 0 && Object.keys(filters[2])}
-                        className="btn btn-primary">Вода</button>
-                    <button 
-                        onClick={e => setFilter(e.target.dataset.value)} 
-                        data-value={filters.length > 0 && Object.keys(filters[3])}
-                        className="btn btn-success">Ветер</button>
-                    <button 
-                        onClick={e => setFilter(e.target.dataset.value)} 
-                        data-value={filters.length > 0 && Object.keys(filters[4])}
-                        className="btn btn-secondary">Земля</button>
+                    {renderFilters(filters)}
                 </div>
             </div>
         </div>

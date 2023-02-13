@@ -13,29 +13,37 @@
       "id": "a702f393-6c2b-43d7-bb24-1c72931de639"
     },
     {
-      "name": "Third Hero",
-      "description": "Something",
-      "element": "wind",
-      "id": "f570f3a6-2935-4a15-86cb-560c6941e52c"
+      "name": "gfdgfdgfdd",
+      "description": "gfdgfdgdf",
+      "element": "name",
+      "id": "11decac7-02b2-4b16-9b21-622e03e8146c"
     }
-  ],
-  "filteredHeroes": [
   ],
   "filters": [
     {
-      "all": "Я владею элементом..."
+      "name": "all",
+      "label": "Все",
+      "className": "btn-outline-dark"
     },
     {
-      "fire": "Огонь"
+      "name": "fire",
+      "label": "Огонь",
+      "className": "btn-danger"
     },
     {
-      "water": "Вода"
+      "name": "water",
+      "label": "Вода",
+      "className": "btn-primary"
     },
     {
-      "wind": "Ветер"
+      "name": "wind",
+      "label": "Ветер",
+      "className": "btn-success"
     },
     {
-      "earth": "Земля"
+      "name": "earth",
+      "label": "Земля",
+      "className": "btn-secondary"
     }
   ]
 }

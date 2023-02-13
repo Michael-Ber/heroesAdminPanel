@@ -42,7 +42,7 @@ const HeroesAddForm = () => {
             }}
             validationSchema={validationSchema}
             onSubmit={values => {
-                const newElem = {...values, id: uuidv4()}
+                const newElem = {...values, id: uuidv4()};
                 request(`http://localhost:3001/heroes`, 'POST', JSON.stringify(newElem))
                  .then(() => dispatch(heroesFetched([...heroes, newElem])))
                  .catch(() => dispatch(heroesFetchingError()))
@@ -94,11 +94,6 @@ const HeroesAddForm = () => {
                                     <option key={i} value={val}>{Object.values(item)[0]}</option>
                                 )
                             })}
-                        {/* <option value="">Я владею элементом...</option>
-                        <option value="fire">Огонь</option>
-                        <option value="water">Вода</option>
-                        <option value="wind">Ветер</option>
-                        <option value="earth">Земля</option> */}
                     </Field>
                     {errors.element && touched.element ? <div className='form-error'>{errors.element}</div> : null}
                 </div>
