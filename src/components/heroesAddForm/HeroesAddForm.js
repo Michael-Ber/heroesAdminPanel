@@ -3,18 +3,10 @@ import { Formik, Form, Field } from 'formik';
 import {object, string} from 'yup';
 import { useHttp } from '../../hooks/http.hook';
 import { useSelector, useDispatch } from 'react-redux';
-import { heroesFetching, heroesFetched, heroesFetchingError } from '../../actions';
+import { heroCreated, heroesFetched, heroesFetchingError } from '../../actions';
 import {v4 as uuidv4} from 'uuid';
 import './heroesAddForm.scss';
-// Задача для этого компонента:
-// Реализовать создание нового героя с введенными данными. Он должен попадать
-// в общее состояние и отображаться в списке + фильтроваться
-// Уникальный идентификатор персонажа можно сгенерировать через uiid
-// Усложненная задача:
-// Персонаж создается и в файле json при помощи метода POST
-// Дополнительно:
-// Элементы <option></option> желательно сформировать на базе
-// данных из фильтров
+
 const validationSchema = object({
     name: string()
         .min(2, 'Too Short!')
@@ -27,12 +19,26 @@ const validationSchema = object({
 
 const HeroesAddForm = () => {
     const {request} = useHttp();
-    const {heroes} = useSelector(state => state);
-    const {filters} = useSelector(state => state);
+    const {filters, filtersLoadingStatus} = useSelector(state => state);
     const dispatch = useDispatch();
     const [nameVal, setNameVal] = useState('');
     const [descrVal, setDescrVal] = useState('');
     const [elementVal, setElementVal] = useState('');
+
+    const renderFilters = (filters, status) => {
+        if(status === 'loading') {
+            return <option>Загрузка элементов</option>
+        }else if(status === 'error') {
+            return <option>Ошибка загрузки</option>
+        }
+        if(filters && filters.length > 0) {
+            return filters.map(({name, label}) => {
+                return (
+                    <option key={name} value={name}>{label}</option>
+                )
+            })
+        }
+    }
     return (
         <Formik
             initialValues={{
@@ -44,8 +50,8 @@ const HeroesAddForm = () => {
             onSubmit={values => {
                 const newElem = {...values, id: uuidv4()};
                 request(`http://localhost:3001/heroes`, 'POST', JSON.stringify(newElem))
-                 .then(() => dispatch(heroesFetched([...heroes, newElem])))
-                 .catch(() => dispatch(heroesFetchingError()))
+                 .then(() => dispatch(heroCreated( newElem )))
+                 .catch((e) => console.log(e))
                  .finally(() => { setNameVal(''); setDescrVal(''); setElementVal('')})
                 
             }}
@@ -88,12 +94,7 @@ const HeroesAddForm = () => {
                         className="form-select" 
                         id="element" 
                         name="element">
-                            {filters.map((item, i) => {
-                                const val = Object.keys(item)[0] === 'all' ? '' : Object.keys(item)[0];
-                                return (
-                                    <option key={i} value={val}>{Object.values(item)[0]}</option>
-                                )
-                            })}
+                            {renderFilters(filters, filtersLoadingStatus)}
                     </Field>
                     {errors.element && touched.element ? <div className='form-error'>{errors.element}</div> : null}
                 </div>
