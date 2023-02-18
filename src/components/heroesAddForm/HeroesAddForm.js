@@ -3,7 +3,7 @@ import { Formik, Form, Field } from 'formik';
 import {object, string} from 'yup';
 import { useHttp } from '../../hooks/http.hook';
 import { useSelector, useDispatch } from 'react-redux';
-import { heroCreated, heroesFetched, heroesFetchingError } from '../../actions';
+import { heroCreated } from '../../components/heroesList/heroesSlice';
 import {v4 as uuidv4} from 'uuid';
 import './heroesAddForm.scss';
 
@@ -19,7 +19,7 @@ const validationSchema = object({
 
 const HeroesAddForm = () => {
     const {request} = useHttp();
-    const {filters, filtersLoadingStatus} = useSelector(state => state);
+    const {filters, filtersLoadingStatus} = useSelector(state => state.filters);
     const dispatch = useDispatch();
     const [nameVal, setNameVal] = useState('');
     const [descrVal, setDescrVal] = useState('');
@@ -33,6 +33,9 @@ const HeroesAddForm = () => {
         }
         if(filters && filters.length > 0) {
             return filters.map(({name, label}) => {
+                if(name === 'all') {
+                    return null
+                }
                 return (
                     <option key={name} value={name}>{label}</option>
                 )
@@ -94,6 +97,7 @@ const HeroesAddForm = () => {
                         className="form-select" 
                         id="element" 
                         name="element">
+                            <option value="">Я владею элементом...</option>
                             {renderFilters(filters, filtersLoadingStatus)}
                     </Field>
                     {errors.element && touched.element ? <div className='form-error'>{errors.element}</div> : null}
