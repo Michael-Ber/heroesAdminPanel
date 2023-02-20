@@ -4,6 +4,7 @@ import {object, string} from 'yup';
 import { useHttp } from '../../hooks/http.hook';
 import { useSelector, useDispatch } from 'react-redux';
 import { heroCreated } from '../../components/heroesList/heroesSlice';
+import { selectAll } from '../heroesFilters/filtersSlice';
 import {v4 as uuidv4} from 'uuid';
 import './heroesAddForm.scss';
 
@@ -19,7 +20,8 @@ const validationSchema = object({
 
 const HeroesAddForm = () => {
     const {request} = useHttp();
-    const {filters, filtersLoadingStatus} = useSelector(state => state.filters);
+    const {filtersLoadingStatus} = useSelector(state => state.filters);
+    const filters = useSelector(selectAll);
     const dispatch = useDispatch();
     const [nameVal, setNameVal] = useState('');
     const [descrVal, setDescrVal] = useState('');
